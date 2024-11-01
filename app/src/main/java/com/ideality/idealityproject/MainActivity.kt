@@ -1,4 +1,4 @@
-package com.example.idealityproject
+package com.ideality.idealityproject
 
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -19,9 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.ar.core.ArCoreApk
@@ -34,8 +37,11 @@ import io.github.sceneview.ar.node.AnchorNode
 import io.github.sceneview.gesture.MoveGestureDetector
 import io.github.sceneview.gesture.RotateGestureDetector
 import io.github.sceneview.gesture.ScaleGestureDetector
+import io.github.sceneview.node.CubeNode
+import io.github.sceneview.node.ModelNode
 import io.github.sceneview.node.Node
 import kotlinx.coroutines.delay
+import java.io.IOException
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -43,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             Main()
             CheckAndInstallARCore()
@@ -52,37 +59,41 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun Main() {
         // Define your composable functions here
-        ConstraintLayout (
+        ConstraintLayout(
             Modifier
                 .fillMaxSize()
                 .padding(WindowInsets.systemBars.asPaddingValues())
         ) {
             // Add your UI elements here
             val (left, right, up, down) = createRefs()
-
             // Model list
             val (list) = createRefs()
 
-            val listenerCreator = remember {
+            var listenerCreator by remember {
                 mutableStateOf<io.github.sceneview.gesture.GestureDetector.OnGestureListener?>(null)
             }
 
+            val anchorNodes = remember {
+                mutableStateOf<AnchorNode?>(null)
+            }
 
             ARScene(
                 modifier = Modifier
                     .fillMaxSize(),
-                onGestureListener = listenerCreator.value,
+                onGestureListener = listenerCreator,
                 sessionConfiguration = { sess, config ->
-                    config.depthMode = when (sess.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
-                        true -> {
-                            Log.d("ARScene", "DepthMode = Automatic")
-                            Config.DepthMode.AUTOMATIC
+                    config.depthMode =
+                        when (sess.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
+                            true -> {
+                                Log.d("ARScene", "DepthMode = Automatic")
+                                Config.DepthMode.AUTOMATIC
+                            }
+
+                            false -> {
+                                Log.d("ARScene", "DepthMode = Disabled")
+                                Config.DepthMode.DISABLED
+                            }
                         }
-                        false -> {
-                            Log.d("ARScene", "DepthMode = Disabled")
-                            Config.DepthMode.DISABLED
-                        }
-                    }
                     config.updateMode = Config.UpdateMode.LATEST_CAMERA_IMAGE
                     config.instantPlacementMode = Config.InstantPlacementMode.LOCAL_Y_UP
                     config.lightEstimationMode = Config.LightEstimationMode.ENVIRONMENTAL_HDR
@@ -108,22 +119,29 @@ class MainActivity : AppCompatActivity() {
                         val result = this.hitTestAR(
                             e.x,
                             e.y,
-                            depthPoint = this.session?.isDepthModeSupported(Config.DepthMode.AUTOMATIC) ?: false
+                            depthPoint = this.session?.isDepthModeSupported(Config.DepthMode.AUTOMATIC)
+                                ?: false
                         ) { hitRes ->
                             val anchor = hitRes.createAnchorOrNull()
                             if (anchor != null) {
                                 val anchorNode = AnchorNode(engine = this.engine, anchor = anchor)
+                                this@ARScene.clearChildNodes()
+                                anchorNodes.value = anchorNode
                                 this@ARScene.addChildNode(anchorNode)
                                 Log.d("ARScene", "added anchor node ${anchorNode.position}")
                             }
 
                             false
                         }
+                        val ht = this.session?.frame?.hitTestInstantPlacement(e.xPrecision, e.yPrecision, 0.5F)!!.getOrNull(0)
+                        if (ht != null) {
+                            Log.d("ARScene","Distance: ${ht.distance}")
+                        }
                         result
                     }
 
 
-                    listenerCreator.value =
+                    listenerCreator =
                         object : io.github.sceneview.gesture.GestureDetector.OnGestureListener {
                             override fun onContextClick(e: MotionEvent, node: Node?) {
                                 Log.d("ARScene", "onContextClick: Not yet implemented")
@@ -134,7 +152,34 @@ class MainActivity : AppCompatActivity() {
                             }
 
                             override fun onDoubleTapEvent(e: MotionEvent, node: Node?) {
-                                Log.d("ARScene", "onDoubleTapEvent: Not yet implemented")
+                                val filePath = "Modern_Club_Chair.glb"
+                                try {
+                                    val testModel = ModelNode(
+                                        modelLoader.createModelInstance(filePath)
+                                    ).apply {
+                                        isEditable = true
+                                    }
+                                    val boundingBoxNode = CubeNode(
+                                        engine,
+                                        size = testModel.extents,
+                                        center = testModel.center,
+                                        materialInstance = materialLoader.createColorInstance(Color.White.copy(alpha = 0.5f))
+                                    ).apply {
+                                        isVisible = false
+                                    }
+                                    testModel.addChildNode(boundingBoxNode)
+                                    if (anchorNodes.value != null) {
+                                        Log.d("ARScene", "Added model node $testModel. size: ${testModel.size}")
+                                        anchorNodes.value!!.addChildNode(testModel)
+                                    }
+//                                    System.gc()
+//                                    Runtime.getRuntime().runFinalization()
+                                    Log.d("ARScene", "Opened file $filePath")
+                                } catch (ioe: IOException) {
+                                    Log.e("ARScene", "Cannot open sample file $filePath")
+                                } finally {
+                                    Toast.makeText(context, "OnDoubleTapUpEvent", Toast.LENGTH_SHORT).show()
+                                }
                             }
 
                             override fun onDown(e: MotionEvent, node: Node?) {
@@ -252,7 +297,7 @@ class MainActivity : AppCompatActivity() {
                                 Log.d("ARScene", "onSingleTapUp: Not yet implemented")
                             }
                         }
-
+                    onGestureListener = listenerCreator
 
                     Log.d("ARScene", "onGestureListener: ${this.onGestureListener.toString()}")
                 }
@@ -392,6 +437,7 @@ class MainActivity : AppCompatActivity() {
                     // ARCore is installed, proceed with AR functionality
                     return true
                 }
+
                 ArCoreApk.InstallStatus.INSTALL_REQUESTED -> {
                     // ARCore installation requested, pause the app until installation completes
                     userRequestedInstall = false

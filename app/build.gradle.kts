@@ -14,11 +14,11 @@ composeCompiler {
 }
 
 android {
-    namespace = "com.example.idealityproject"
+    namespace = "com.ideality.idealityproject"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.idealityproject"
+        applicationId = "com.ideality.idealityproject"
         minSdk = 29
         targetSdk = 35
         versionCode = 1

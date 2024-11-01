@@ -1,4 +1,4 @@
-package com.example.idealityproject
+package com.ideality.idealityproject
 
 import org.junit.Test
 
