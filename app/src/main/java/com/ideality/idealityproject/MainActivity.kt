@@ -11,9 +11,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.ar.core.ArCoreApk
 import com.google.ar.core.ArCoreApk.Availability
@@ -68,6 +72,20 @@ class MainActivity : AppCompatActivity() {
             val (left, right, up, down) = createRefs()
             // Model list
             val (list) = createRefs()
+            val display = false
+            if (display) {
+                LazyRow (
+                    Modifier.constrainAs(list) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom, margin = 20.dp)
+                    }.fillMaxSize(0.8f).defaultMinSize(300.dp, 60.dp)
+                ) {
+                    itemsIndexed(listOf(0,1)) { idx, item ->
+
+                    }
+                }
+            }
 
             var listenerCreator by remember {
                 mutableStateOf<io.github.sceneview.gesture.GestureDetector.OnGestureListener?>(null)
