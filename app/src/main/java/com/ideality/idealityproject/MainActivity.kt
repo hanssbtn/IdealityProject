@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -31,9 +32,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.createGraph
 import com.google.ar.core.ArCoreApk
 import com.google.ar.core.ArCoreApk.Availability
 import com.google.ar.core.Config
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.ideality.idealityproject.ui.theme.AppTheme
+import dagger.hilt.android.AndroidEntryPoint
 import dev.romainguy.kotlin.math.Float2
 import io.github.sceneview.ar.ARScene
 import io.github.sceneview.ar.arcore.createAnchorOrNull
@@ -48,16 +59,47 @@ import kotlinx.coroutines.delay
 import java.io.IOException
 import kotlin.system.exitProcess
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private var userRequestedInstall = true
+    private val loginVM: LoginViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        FirebaseApp.initializeApp(this)
+        Log.d("MainActivity",FirebaseApp.getInstance().options.apiKey)
         setContent {
-            Main()
-            CheckAndInstallARCore()
+            AppTheme {
+                Navigation()
+                CheckAndInstallARCore()
+            }
         }
+    }
+
+    @Composable
+    fun Navigation() {
+        val navController = rememberNavController()
+        val navigationState = remember(navController) { NavigationState(navController) }
+        val navGraph = remember(navController) {
+            navController.createGraph(startDestination = SPLASH_SCREEN) {
+                composable(MAIN) {
+                    Main()
+                }
+                composable(LOGIN_SCREEN) {
+                    LoginScreen(vm = loginVM) { to, from ->
+                        navigationState.navigateAndPopUp(to, from)
+                    }
+                }
+                composable(SPLASH_SCREEN) {
+                    SplashScreen { to, from -> navigationState.navigateAndPopUp(to, from) }
+                }
+            }
+        }
+        NavHost(
+            modifier = Modifier.fillMaxSize(),
+            navController = navController,
+            graph = navGraph
+        )
     }
 
     @Composable

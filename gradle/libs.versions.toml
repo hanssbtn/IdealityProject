@@ -1,21 +1,30 @@
 [versions]
 activityCompose = "1.9.3"
-agp = "8.6.0"
+agp = "8.6.1"
 arsceneview = "2.2.1"
-constraintlayoutCompose = "1.0.1"
+constraintlayoutCompose = "1.1.0"
 core = "1.46.0"
 googleServices = "4.4.2"
+hiltAndroid = "2.51.1"
+hiltAndroidCompiler = "2.51.1"
+hiltAndroidGradlePlugin = "2.51.1"
+hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
-lifecycleViewmodelCompose = "2.8.6"
+lifecycleViewmodelCompose = "2.8.7"
+lifecycleViewmodelKtx = "2.8.7"
 material = "1.12.0"
 activity = "1.9.3"
-constraintlayout = "2.1.4"
+navigationCompose = "2.8.3"
+navigationTesting = "2.8.3"
 sceneview = "2.2.1"
+uiTextGoogleFonts = "1.7.5"
+firebaseFirestoreKtx = "25.1.1"
+firebaseCore = "21.1.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -23,9 +32,13 @@ androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-material3 = { module = "androidx.compose.material3:material3" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation-testing = { module = "androidx.navigation:navigation-testing", version.ref = "navigationTesting" }
 androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
@@ -34,15 +47,20 @@ androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview
 arsceneview = { module = "io.github.sceneview:arsceneview", version.ref = "arsceneview" }
 core = { module = "com.google.ar:core", version.ref = "core" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
+firebase-core = { module = "com.google.firebase:firebase-core", version.ref = "firebaseCore" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hiltAndroidGradlePlugin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 sceneview = { module = "io.github.sceneview:sceneview", version.ref = "sceneview" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

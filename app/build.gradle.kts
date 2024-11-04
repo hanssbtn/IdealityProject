@@ -4,7 +4,14 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
     // Existing plugins
+    id("com.google.gms.google-services")
     alias(libs.plugins.compose.compiler)
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 composeCompiler {
@@ -15,7 +22,7 @@ composeCompiler {
 
 android {
     namespace = "com.ideality.idealityproject"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.ideality.idealityproject"
@@ -55,9 +62,15 @@ android {
 }
 
 dependencies {
+    // Dagger / Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
 
+    // Google Fonts
+    implementation(libs.androidx.ui.text.google.fonts)
     // Jetpack Compose BOM
-    val composeBom = platform("androidx.compose:compose-bom:2024.09.03")
+    val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
     implementation(composeBom)
     // Jetpack Compose + Material3
     androidTestImplementation(composeBom)
@@ -88,23 +101,34 @@ dependencies {
     // ARSceneView
     implementation(libs.arsceneview)
 
+    implementation(libs.google.services)
+
     // Firebase BOM
     //noinspection UseTomlInstead
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    // Firebase Core
+    implementation(libs.firebase.core)
     // Firebase Auth
     implementation(libs.firebase.auth.ktx)
+    // Firebase Admin (delete later)
     // FirebaseUI Auth
     implementation(libs.androidx.credentials.play.services.auth)
+    // Firebase Firestore
+    implementation(libs.firebase.firestore.ktx)
 
-    // SignInButton
-    implementation(libs.google.services)
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+    androidTestImplementation(libs.androidx.navigation.testing)
+
+    // AndroidX KTX
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.core.ktx)
 
     // Core libs
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
