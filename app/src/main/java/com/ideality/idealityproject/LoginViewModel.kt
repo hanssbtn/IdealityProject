@@ -1,9 +1,7 @@
 package com.ideality.idealityproject
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -57,6 +55,12 @@ class LoginViewModel @Inject constructor(
     fun signUpAnonymously() {
         launchCatching {
             loginService.signInAnonymous()
+        }
+    }
+
+    fun signOut() {
+        launchCatching {
+            loginService.signOut()
         }
     }
 }
