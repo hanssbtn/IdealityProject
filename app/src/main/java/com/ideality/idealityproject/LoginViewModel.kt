@@ -1,7 +1,9 @@
 package com.ideality.idealityproject
 
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +29,8 @@ class LoginViewModel @Inject constructor(
             _password.value = value
         }
 
+    var isSignedIn by mutableStateOf(false)
+
     val user = loginService.user
 
     val showEmailError = mutableStateOf(false)
@@ -43,24 +47,28 @@ class LoginViewModel @Inject constructor(
     fun signIn() {
         launchCatching {
             loginService.signIn(email.text, password.text)
+            isSignedIn = true
         }
     }
 
     fun signUp() {
         launchCatching {
             loginService.signUp(email.text, password.text)
+            isSignedIn = true
         }
     }
 
     fun signUpAnonymously() {
         launchCatching {
             loginService.signInAnonymous()
+            isSignedIn = true
         }
     }
 
     fun signOut() {
         launchCatching {
             loginService.signOut()
+            isSignedIn = false
         }
     }
 }

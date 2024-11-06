@@ -1,11 +1,11 @@
 [versions]
 activityCompose = "1.9.3"
-agp = "8.6.1"
+agp = "8.7.2"
 arsceneview = "2.2.1"
 constraintlayoutCompose = "1.1.0"
 core = "1.46.0"
 googleServices = "4.4.2"
-hiltAndroid = "2.51.1"
+hiltAndroid = "2.52"
 hiltAndroidCompiler = "2.51.1"
 hiltAndroidGradlePlugin = "2.51.1"
 hiltNavigationCompose = "1.2.0"

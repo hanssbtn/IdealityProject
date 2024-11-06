@@ -1,6 +1,5 @@
 package com.ideality.idealityproject
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +18,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +43,18 @@ fun LoginScreen(vm: LoginViewModel, openAndPopUp: (String, String) -> Unit) {
     val showPasswordError by vm.showPasswordError
     val user by vm.user.collectAsState(null)
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
+
+    LaunchedEffect(vm.isSignedIn) {
+        if (vm.isSignedIn) {
+            vm.user.collect { userId ->
+                if (userId != null) {
+                    Toast.makeText(context, "User logged in", Toast.LENGTH_SHORT).show()
+                    openAndPopUp(MAIN, LOGIN_SCREEN)
+                    // Optionally reset isSignedIn if needed
+                }
+            }
+        }
+    }
 
     AppTheme {
         Box(
@@ -112,11 +124,11 @@ fun LoginScreen(vm: LoginViewModel, openAndPopUp: (String, String) -> Unit) {
                         if (showEmailError || showPasswordError) return@OutlinedButton
 
                         vm.signIn()
-                        if (user != null) {
-                            Toast.makeText(context, "User logged in", Toast.LENGTH_SHORT).show()
-                            Log.d("LoginScreen", "Username: ${user.orEmpty()}")
-                            openAndPopUp(MAIN, LOGIN_SCREEN)
-                        }
+//                        Log.d("LoginScreen", "Username: ${user.orEmpty()}")
+//                        if (user != null) {
+//                            Toast.makeText(context, "User logged in", Toast.LENGTH_SHORT).show()
+//                            openAndPopUp(MAIN, LOGIN_SCREEN)
+//                        }
                     }
                 ) {
                     Text("Sign In")
@@ -133,11 +145,11 @@ fun LoginScreen(vm: LoginViewModel, openAndPopUp: (String, String) -> Unit) {
                         }
                         if (showEmailError || showPasswordError) return@OutlinedButton
                         vm.signUp()
-                        if (user != null) {
-                            Toast.makeText(context, "User logged in", Toast.LENGTH_SHORT).show()
-                            Log.d("LoginScreen", "Username: ${user.orEmpty()}")
-                            openAndPopUp(MAIN, LOGIN_SCREEN)
-                        }
+//                        Log.d("LoginScreen", "Username: ${user.orEmpty()}")
+//                        if (user != null) {
+//                            Toast.makeText(context, "User logged in", Toast.LENGTH_SHORT).show()
+//                            openAndPopUp(MAIN, LOGIN_SCREEN)
+//                        }
                     }
                 ) {
                     Text("Sign Up")
@@ -148,12 +160,13 @@ fun LoginScreen(vm: LoginViewModel, openAndPopUp: (String, String) -> Unit) {
                     onClick = {
                         vm.showPasswordError.value = false
                         vm.showEmailError.value = false
+
                         vm.signUpAnonymously()
-                        if (user != null) {
-                            Toast.makeText(context, "User logged in", Toast.LENGTH_SHORT).show()
-                            Log.d("LoginScreen", "Username: ${user.orEmpty()}")
-                            openAndPopUp(MAIN, LOGIN_SCREEN)
-                        }
+//                        Log.d("LoginScreen", "Username: ${user.orEmpty()}")
+//                        if (user != null) {
+//                            Toast.makeText(context, "User logged in", Toast.LENGTH_SHORT).show()
+//                            openAndPopUp(MAIN, LOGIN_SCREEN)
+//                        }
                     }
                 ) {
                     Text("Continue as guest")
