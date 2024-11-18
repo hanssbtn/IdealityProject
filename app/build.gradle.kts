@@ -101,7 +101,9 @@ dependencies {
     implementation(libs.sceneview)
     // ARSceneView
     implementation(libs.arsceneview)
-    //
+
+//    // Filament
+//    implementation(libs.filament.android)
 
     // Google Services
     implementation(libs.google.services)
